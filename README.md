@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-Termux%20%7C%20Linux-orange)
 ![Version](https://img.shields.io/badge/version-2.3.0-informational)
 
-**ZHESP** (Zero’s Hash Encryption Secure Protocol) is a secure, text-focused encryption CLI tool designed to be fast, safe, and hacker-friendly. It’s part of the [Anonymity 2.0 Project](https://github.com/CEO-netizen) — a suite of privacy tools for developers, pen-testers, and digital survivalists. I'm sorry but most of my tools don't have Github repos see my [PyPi](https://pypi.org/4n0nym0us) profile
+**ZHESP** (Zero’s Hash Encryption Secure Protocol) is a secure, text-focused encryption CLI tool designed to be fast, safe, and hacker-friendly. It’s part of the [Anonymity 2.0 Project](https://github.com/CEO-netizen) — a suite of privacy tools for developers, pen-testers, and digital survivalists. I'm sorry but most of my tools don't have Github repos see my [PyPi](https://pypi.org/user/4n0nym0us/) profile
 
 Built entirely in **Termux on Android**, ZHESP focuses on clean UX, hardened key derivation, non-deterministic encryption, and complete CLI control — without depending on heavyweight file systems or bloated GUI wrappers.
 
