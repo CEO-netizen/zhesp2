@@ -25,6 +25,11 @@ Built entirely in **Termux on Android**, ZHESP focuses on clean UX, hardened key
 > 🧠 **Note:** ZHESP is **not a file encryption tool** — it's a **secure text encryption utility**, built for CLI environments, scripts, and key-based workflows.
 
 ---
+## Installation
+people on Linux can install the tarball [here](https://files.pythonhosted.org/packages/b8/94/4a90a24ff113ce4a9dbc9e1fba10329461a454271f250dcb31fdb33bb505/zhesp2-2.3.0.tar.gz)
+people on Termux can use pip install zhesp2
+
+---
 
 ## 🧪 Example Usage
 
