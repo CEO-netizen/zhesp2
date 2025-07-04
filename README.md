@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-Termux%20%7C%20Linux-orange)
 ![Version](https://img.shields.io/badge/version-2.3.0-informational)
 
-**ZHESP** (Zero’s Hash Encryption Secure Protocol) is a secure, text-focused encryption CLI tool designed to be fast, safe, and hacker-friendly. It’s part of the [Anonymity 2.0 Project](https://github.com/CEO-netizen) — a suite of privacy tools for developers, pen-testers, and digital survivalists. I'm sorry but most of my tools don't have Github repos see my [PyPi](https://pypi.org/user/4n0nym0us/) profile
+**ZHESP** (Zero’s Hash Encryption Secure Protocol) is a secure, text-focused encryption CLI tool designed to be fast, safe, and hacker-friendly. It’s part of the [Anonymity 2.0 Project](https://github.com/4n0nym0us) — a suite of privacy tools for developers, pen-testers, and digital survivalists.
 
 Built entirely in **Termux on Android**, ZHESP focuses on clean UX, hardened key derivation, non-deterministic encryption, and complete CLI control — without depending on heavyweight file systems or bloated GUI wrappers.
 
@@ -25,11 +25,6 @@ Built entirely in **Termux on Android**, ZHESP focuses on clean UX, hardened key
 > 🧠 **Note:** ZHESP is **not a file encryption tool** — it's a **secure text encryption utility**, built for CLI environments, scripts, and key-based workflows.
 
 ---
-## Installation
-people on Linux can install the tarball [here](https://files.pythonhosted.org/packages/b8/94/4a90a24ff113ce4a9dbc9e1fba10329461a454271f250dcb31fdb33bb505/zhesp2-2.3.0.tar.gz)
-people on Termux can use pip install zhesp2
-
----
 
 ## 🧪 Example Usage
 
@@ -42,3 +37,34 @@ zhesp2 encrypt "My secret message"
 
 zhesp2 decrypt "rHrNJkvSo..."
 # → Prompts for key or passphrase, then decrypts
+
+---
+
+## Installation
+
+Install from PyPI:
+
+pip install zhesp2
+
+Or install from source:
+
+git clone https://github.com/CEO-netizen/zhesp2.git
+cd zhesp2
+python -m build
+pip install dist/*.whl
+
+
+---
+
+🛡️ Security Overview
+
+ZHESP uses best-practice cryptographic patterns:
+
+Component	Method
+
+Key Derivation	PBKDF2-HMAC-SHA256 (configurable iterations)
+Salt	128-bit per-run random salt
+Encryption	AES (CBC or GCM, based on profile)
+Metadata	Embedded + optionally obfuscated
+Output	Base64-encoded ciphertext
+Protection	Throttled decrypt, version headers
