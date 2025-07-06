@@ -168,3 +168,47 @@ def _test_roundtrip() -> None:
 # ────────────────────────────── Entrypoint ───────────────────────────────── #
 if __name__ == "__main__":
     main()
+
+    while True:
+        try:
+            cmd = input("zhesp2 > ").strip()
+            if not cmd:
+                continue
+            args = shlex.split(cmd)
+
+            match args[0]:
+                case "exit" | "quit":
+                    print("[*] Goodbye.")
+                    break
+                case "encrypt":
+                    msg = " ".join(args[1:]) or input("Message: ")
+                    pwd = getpass.getpass("Passphrase: ")
+                    token = safe_encrypt_flow(msg, pwd)
+                    print("[+] Encrypted token:\n" + token)
+                case "decrypt":
+                    token = args[1] if len(args) > 1 else input("Ciphertext: ")
+                    pwd = getpass.getpass("Passphrase: ")
+
+                    if failures >= 3:
+                        delay = min(2 ** (failures - 2), 60)
+                        print(f"[!] Too many failed attempts. Sleeping {delay}s...")
+                        time.sleep(delay)
+
+                    result = decrypt(token, pwd)
+                    print(result)
+                    failures = failures + 1 if result.startswith("[!]") else 0
+                case "genkey":
+                    generate_key()
+                case "update":
+                    update_self()
+                case _:
+                    print("[!] Unknown command.")
+        except (KeyboardInterrupt, EOFError):
+            print("\n[!] Exiting Z-HESP2.")
+            break
+        except Exception as err:
+            print(f"[!] Error: {err}")
+
+# ─────────────────────────────── Entrypoint ─────────────────────────────── #
+if __name__ == "__main__":
+    main()
