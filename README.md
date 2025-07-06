@@ -15,6 +15,7 @@ Built entirely in **Termux on Android**, ZHESP focuses on clean UX, hardened key
 - 🔑 `genkey`: Secure passphrase/key generation
 - 🧂 Salted PBKDF2-HMAC-SHA256 with strong iteration count
 - ✨ AES encryption of **text**, with fully encoded output
+- 🆕 `update`: updates your version of ZHESP only works when installing from PyPi and not a regular file
 - 🔒 Encrypted headers and optional obfuscation
 - 📋 Clipboard-friendly output, with optional auto-clear
 - 🧠 Passphrase confirmation, entropy scoring, and warnings
