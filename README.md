@@ -63,7 +63,7 @@ ZHESP uses best-practice cryptographic patterns:
 
 Component	Method
 
-Key Derivation	PBKDF2-HMAC-SHA256 (configurable iterations)
+Key Derivation	PBKDF2-HMAC-SHA256
 Salt	128-bit per-run random salt
 Encryption	AES (CBC or GCM, based on profile)
 Metadata	Embedded + optionally obfuscated
