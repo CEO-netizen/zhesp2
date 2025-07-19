@@ -70,3 +70,8 @@ MIT License
 ## Author
 
 Zero
+
+## donation address
+```ethereum
+0x2800aBdF356809F4EbE2c9158630CcF975E1Ee67
+```
