@@ -1,0 +1,92 @@
+Metadata-Version: 2.4
+Name: zhesp2
+Version: 2.4.2
+Summary: Z-HESP2 — Zero’s Hash Encryption Secure Protocol
+Author: Zero
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: pycryptodome>=3.19.0
+Requires-Dist: argon2-cffi>=21.3.0
+Dynamic: author
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# Z-HESP2 — Zero’s Hash Encryption Secure Protocol
+
+Z-HESP2 is a terminal-based encryption tool designed for secure and efficient data protection. It features modern cryptographic techniques, including Argon2id key derivation and AES-GCM encryption, with support for metadata and multiple encryption versions.
+
+## Features
+
+- **Strong Encryption:** Uses AES-GCM with Argon2id key derivation for robust security.
+- **Metadata Support:** Includes encrypted metadata such as timestamps and versioning.
+- **Multiple Versions:** Supports legacy and current encryption formats.
+- **File and Directory Encryption:** Encrypt and decrypt individual files or entire directories recursively.
+- **Command Line Interface:** Easy-to-use CLI with commands for encryption, decryption, key generation, and version listing.
+- **Help System:** Detailed help available for all commands and specific command summaries.
+- **First-Time Integrity Check:** Ensures encryption system integrity on first use.
+
+## Installation
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Or install directly:
+
+```bash
+pip install pycryptodome argon2-cffi
+```
+
+## Usage
+
+Run the CLI tool:
+
+```bash
+python -m zhesp2
+```
+
+Available commands:
+
+- `encrypt` — Encrypt a plaintext message.
+- `decrypt` — Decrypt an encrypted token.
+- `genkey` — Generate a new encryption key.
+- `listversions` — List supported encryption versions.
+- `encryptfile` — Encrypt a file or directory.
+- `decryptfile` — Decrypt a file or directory.
+- `help` — Show detailed help or help for a specific command.
+- `exit` — Exit the program.
+
+Example:
+
+```bash
+zhesp2 > encrypt
+Message: Hello World
+Passphrase: 
+[+] Encrypted token:
+ZH2:...
+```
+
+## Development
+
+The project is structured as a Python package with the following key modules:
+
+- `crypto.py` — Core cryptographic functions.
+- `cli.py` — Command implementations and utilities.
+- `__main__.py` — CLI entry point and command dispatcher.
+
+## License
+
+MIT License
+
+## Author
+
+Zero
