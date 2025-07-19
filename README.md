@@ -73,5 +73,8 @@ Zero
 
 ## Donation Address
 
-Support development with Ethereum or Ethereum-based tokens: 0x2800aBdF356809F4EbE2c9158630CcF975E1Ee67
+Support development with Ethereum or Ethereum-based tokens:
+
+[![Ethereum](https://img.shields.io/badge/ETH-0x2800aBdF...-627eea?style=flat-square&logo=ethereum&logoColor=white)](https://etherscan.io/address/0x2800aBdF356809F4EbE2c9158630CcF975E1Ee67)
+
 🙏 Thank you for helping keep ZHESP secure and evolving!
