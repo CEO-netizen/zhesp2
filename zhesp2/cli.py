@@ -3,7 +3,7 @@ import getpass
 import time
 import os
 from . import __version__
-from .crypto import encrypt, decrypt, generate_key, VERSIONS_INFO
+from .crypto import encrypt, decrypt, generate_key, VERSIONS_INFO, encrypt_filename, decrypt_filename
 
 INTEGRITY_FLAG_FILE = os.path.expanduser("~/.zhesp2_verified")
 
@@ -117,21 +117,33 @@ def encrypt_file(input_path: str, output_path: str, password: str) -> None:
             for file_path in input_path_obj.rglob('*'):
                 if file_path.is_file():
                     relative_path = file_path.relative_to(input_path_obj)
-                    out_file_path = output_path_obj / relative_path
+                    # Encrypt the filename
+                    encrypted_name = encrypt_filename(str(relative_path.name), password)
+                    # Use .zh extension
+                    encrypted_name_with_ext = encrypted_name + ".zh"
+                    out_file_path = output_path_obj / relative_path.parent / encrypted_name_with_ext
+                    # Ensure parent directory exists
                     out_file_path.parent.mkdir(parents=True, exist_ok=True)
                     with open(file_path, "rb") as f:
                         data = f.read()
                     token = encrypt(data.decode('latin1'), password)
-                    with open(out_file_path.with_suffix(out_file_path.suffix + ".zhesp2"), "w", encoding="utf-8") as f:
+                    with open(out_file_path, "w", encoding="utf-8") as f:
                         f.write(token)
-                    print(f"[+] Encrypted file: {file_path} -> {out_file_path.with_suffix(out_file_path.suffix + '.zhesp2')}")
+                    print(f"[+] Encrypted file: {file_path} -> {out_file_path}")
         else:
+            # Encrypt single file
+            input_name = input_path_obj.name
+            encrypted_name = encrypt_filename(input_name, password)
+            encrypted_name_with_ext = encrypted_name + ".zh"
+            out_file_path = output_path_obj / encrypted_name_with_ext
             with open(input_path, "rb") as f:
                 data = f.read()
             token = encrypt(data.decode('latin1'), password)
-            with open(output_path, "w", encoding="utf-8") as f:
+            # Ensure parent directory exists
+            out_file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(out_file_path, "w", encoding="utf-8") as f:
                 f.write(token)
-            print(f"[+] File encrypted successfully: {output_path}")
+            print(f"[+] File encrypted successfully: {out_file_path}")
     except Exception as e:
         print(f"[!] Error encrypting file: {e}")
 
@@ -143,10 +155,17 @@ def decrypt_file(input_path: str, output_path: str, password: str) -> None:
 
         if input_path_obj.is_dir():
             # Recursively decrypt all files in directory
-            for file_path in input_path_obj.rglob('*.zhesp2'):
+            for file_path in input_path_obj.rglob('*.zh'):
                 if file_path.is_file():
                     relative_path = file_path.relative_to(input_path_obj)
-                    out_file_path = output_path_obj / relative_path.with_suffix('')
+                    # Remove .zh extension and decrypt filename
+                    encrypted_name = relative_path.name[:-3]
+                    try:
+                        decrypted_name = decrypt_filename(encrypted_name, password)
+                    except Exception as e:
+                        print(f"[!] Error decrypting filename {relative_path.name}: {e}")
+                        continue
+                    out_file_path = output_path_obj / relative_path.parent / decrypted_name
                     out_file_path.parent.mkdir(parents=True, exist_ok=True)
                     with open(file_path, "r", encoding="utf-8") as f:
                         token = f.read()
@@ -159,6 +178,17 @@ def decrypt_file(input_path: str, output_path: str, password: str) -> None:
                         f.write(decrypted_message.encode('latin1'))
                     print(f"[+] Decrypted file: {file_path} -> {out_file_path}")
         else:
+            # Decrypt single file
+            if input_path_obj.suffix != ".zh":
+                print(f"[!] Input file does not have .zh extension: {input_path_obj.name}")
+                return
+            encrypted_name = input_path_obj.name[:-3]
+            try:
+                decrypted_name = decrypt_filename(encrypted_name, password)
+            except Exception as e:
+                print(f"[!] Error decrypting filename {input_path_obj.name}: {e}")
+                return
+            out_file_path = output_path_obj / decrypted_name
             with open(input_path, "r", encoding="utf-8") as f:
                 token = f.read()
             result = decrypt(token, password)
@@ -166,8 +196,8 @@ def decrypt_file(input_path: str, output_path: str, password: str) -> None:
                 print(result)
                 return
             decrypted_message = result.split("\n[+] Decrypted: ", 1)[-1]
-            with open(output_path, "wb") as f:
+            with open(out_file_path, "wb") as f:
                 f.write(decrypted_message.encode('latin1'))
-            print(f"[+] File decrypted successfully: {output_path}")
+            print(f"[+] File decrypted successfully: {out_file_path}")
     except Exception as e:
         print(f"[!] Error decrypting file: {e}")

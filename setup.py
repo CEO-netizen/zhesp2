@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="zhesp2",
-    version="2.4.2",
+    version="2.4.5",
     author="Zero",
     description="Z-HESP2 — Zero’s Hash Encryption Secure Protocol",
     long_description=open("README.md", "r", encoding="utf-8").read(),

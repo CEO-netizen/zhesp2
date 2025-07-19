@@ -116,4 +116,44 @@ def decrypt_v2(payload: bytes, password: str) -> str:
 
         return f"[+] Metadata: {json.dumps(metadata, indent=2)}\n[+] Decrypted: {message}"
     except Exception as e:
-        return f"[!] Decryption error (v2): {e}"	
+        return f"[!] Decryption error (v2): {e}"
+
+# New helper functions for filename encryption/decryption
+
+def encrypt_filename(filename: str, password: str) -> str:
+    """
+    Encrypt a filename string using the same encryption scheme but without compression and metadata.
+    Returns a URL-safe base64 encoded string.
+    """
+    salt = os.urandom(16)
+    iv = os.urandom(12)
+    key = derive_key(password, salt)
+
+    # Encrypt filename bytes directly
+    cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
+    ciphertext, tag = cipher.encrypt_and_digest(filename.encode())
+
+    payload = (
+        salt + iv + tag + ciphertext
+    )
+    # Encode payload as base64 urlsafe string
+    return base64.urlsafe_b64encode(payload).decode()
+
+def decrypt_filename(token: str, password: str) -> str:
+    """
+    Decrypt a filename string encrypted by encrypt_filename.
+    """
+    try:
+        payload = base64.urlsafe_b64decode(token)
+        salt = payload[:16]
+        iv = payload[16:28]
+        tag = payload[28:44]
+        ciphertext = payload[44:]
+
+        key = derive_key(password, salt)
+
+        cipher = AES.new(key, AES.MODE_GCM, nonce=iv)
+        plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+        return plaintext.decode()
+    except Exception as e:
+        raise ValueError(f"Filename decryption error: {e}")

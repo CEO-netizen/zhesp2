@@ -6,24 +6,17 @@ Z-HESP2 is a terminal-based encryption tool designed for secure and efficient da
 
 - **Strong Encryption:** Uses AES-GCM with Argon2id key derivation for robust security.
 - **Metadata Support:** Includes encrypted metadata such as timestamps and versioning.
-- **Multiple Versions:** Supports legacy and current encryption formats.
 - **File and Directory Encryption:** Encrypt and decrypt individual files or entire directories recursively.
+- **Filename Encryption:** Encrypted files use encrypted filenames with a `.zh` extension for enhanced security.
 - **Command Line Interface:** Easy-to-use CLI with commands for encryption, decryption, key generation, and version listing.
 - **Help System:** Detailed help available for all commands and specific command summaries.
 - **First-Time Integrity Check:** Ensures encryption system integrity on first use.
 
+
 ## Installation
 
-Install the required dependencies:
-
 ```bash
-pip install -r requirements.txt
-```
-
-Or install directly:
-
-```bash
-pip install pycryptodome argon2-cffi
+pip install zhesp2
 ```
 
 ## Usage
@@ -48,24 +41,26 @@ Available commands:
 Example:
 
 ```bash
-zhesp2 > encrypt
-Message: Hello World
+zhesp2 > encryptfile
+Input file path: /path/to/input
+Output file path: /path/to/output
 Passphrase: 
-[+] Encrypted token:
-ZH2:...
+[+] Encrypted file: /path/to/input/secret.txt -> /path/to/output/ENCRYPTEDFILENAME.zh
 ```
 
 ## Development
+[+] Encrypted file: /path/to/input/secret.txt -> /path/to/output/ENCRYPTEDFILENAME.zh
 
 The project is structured as a Python package with the following key modules:
 
-- `crypto.py` — Core cryptographic functions.
-- `cli.py` — Command implementations and utilities.
+- `crypto.py` — Core cryptographic functions, including filename encryption.
+- `cli.py` — Command implementations and utilities, including file and directory encryption with filename encryption.
 - `__main__.py` — CLI entry point and command dispatcher.
 
 ## License
 
-MIT License
+GNU License Genral Public License v3.0
+**note** This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with this software or the use or other dealings in this software
 
 ## Author
 
@@ -77,4 +72,4 @@ Support development with Ethereum or Ethereum-based tokens:
 
 [![Ethereum](https://img.shields.io/badge/ETH-0x2800aBdF...-627eea?style=flat-square&logo=ethereum&logoColor=white)](https://etherscan.io/address/0x2800aBdF356809F4EbE2c9158630CcF975E1Ee67)
 
-🙏 Thank you for helping keep ZHESP secure and evolving!
+Thank you for helping keep ZHESP secure and evolving!
