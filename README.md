@@ -24,7 +24,7 @@ pip install zhesp2
 Run the CLI tool:
 
 ```bash
-python -m zhesp2
+zhesp2
 ```
 
 Available commands:
