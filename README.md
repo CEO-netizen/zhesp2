@@ -64,7 +64,7 @@ GNU License Genral Public License v3.0
 
 ## Author
 
-Zero
+[Zero](https://pypi.org/user/4n0nym0us/)
 
 ## Donation Address
 
