@@ -28,7 +28,7 @@ def generate_key(length: int = 32, print_key: bool = True) -> str:
     raw = secrets.token_bytes(length)
     b64 = base64.urlsafe_b64encode(raw).decode()
     if print_key:
-        print(f"[+] Generated Key ({length * 8} bits):\nBase64: {b64}\nHex:    {raw.hex()}\n")
+        print(f"[+] Generated Key ({length * 8} bits):\\nBase64: {b64}\\nHex:    {raw.hex()}\\n")
     return b64
 
 def derive_key(password: str, salt: bytes, length: int = 32, time_cost=3, memory_cost=65536, parallelism=2) -> bytes:
@@ -114,7 +114,7 @@ def decrypt_v2(payload: bytes, password: str) -> str:
         plaintext = cipher.decrypt_and_verify(ciphertext, tag)
         message = zlib.decompress(plaintext).decode()
 
-        return f"[+] Metadata: {json.dumps(metadata, indent=2)}\n[+] Decrypted: {message}"
+        return f"[+] Metadata: {json.dumps(metadata, indent=2)}\\n[+] Decrypted: {message}"
     except Exception as e:
         return f"[!] Decryption error (v2): {e}"
 
@@ -157,3 +157,17 @@ def decrypt_filename(token: str, password: str) -> str:
         return plaintext.decode()
     except Exception as e:
         raise ValueError(f"Filename decryption error: {e}")
+
+def resolve_path(path: str) -> str:
+    """
+    Resolve a file path, expanding ~ to the current user's home directory.
+    
+    Args:
+        path (str): The file path to resolve.
+        
+    Returns:
+        str: The resolved absolute file path.
+    """
+    if path.startswith("~"):
+        return os.path.expanduser(path)
+    return path

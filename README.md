@@ -36,7 +36,7 @@ Available commands:
 - `decrypt` — Decrypt an encrypted token.
 - `genkey` — Generate a new encryption key.
 - `listversions` — List supported encryption versions.
-- `encryptfile` — Encrypt a file or directory.
+- `encryptfile` — Encrypt a file or directory. Supports paths with `~` which are resolved to the user's home directory.
 - `decryptfile` — Decrypt a file or directory.
 - `help` — Show detailed help or help for a specific command.
 - `exit` — Exit the program.
@@ -45,10 +45,10 @@ Example:
 
 ```bash
 zhesp2 > encryptfile
-Input file path: /path/to/input
-Output file path: /path/to/output
+Input file path: ~/Documents/secret.txt
+Output file path: ~/Encrypted/
 Passphrase: 
-[+] Encrypted file: /path/to/input/secret.txt -> /path/to/output/ENCRYPTEDFILENAME.zh
+[+] Encrypted file: /home/username/Documents/secret.txt -> /home/username/Encrypted/ENCRYPTEDFILENAME.zh
 ```
 
 ## Development
@@ -56,9 +56,22 @@ Passphrase:
 
 The project is structured as a Python package with the following key modules:
 
-- `crypto.py` — Core cryptographic functions, including filename encryption.
+- `crypto.py` — Core cryptographic functions, including filename encryption and path resolution.
 - `cli.py` — Command implementations and utilities, including file and directory encryption with filename encryption.
 - `__main__.py` — CLI entry point and command dispatcher.
+
+### New Utility Function: resolve_path
+
+A new utility function `resolve_path(path: str) -> str` has been added to `crypto.py`. This function expands the tilde (`~`) in file paths to the current user's home directory, ensuring that paths using `~` are correctly resolved when encrypting or decrypting files.
+
+Example usage:
+
+```python
+from zhesp2.crypto import resolve_path
+
+input_path = resolve_path("~/Documents/secret.txt")
+print(input_path)  # Outputs: /home/username/Documents/secret.txt
+```
 
 ## License
 

@@ -46,12 +46,18 @@ def main() -> None:
                     input_path = input("Input file path: ").strip()
                     output_path = input("Output file path: ").strip()
                     pwd = getpass.getpass("Passphrase: ")
+                    from .crypto import resolve_path
+                    input_path = resolve_path(input_path)
+                    output_path = resolve_path(output_path)
                     from .cli import encrypt_file
                     encrypt_file(input_path, output_path, pwd)
                 case "decryptfile":
                     input_path = input("Input file path: ").strip()
                     output_path = input("Output file path: ").strip()
                     pwd = getpass.getpass("Passphrase: ")
+                    from .crypto import resolve_path
+                    input_path = resolve_path(input_path)
+                    output_path = resolve_path(output_path)
                     from .cli import decrypt_file
                     decrypt_file(input_path, output_path, pwd)
                 case "genkey":
