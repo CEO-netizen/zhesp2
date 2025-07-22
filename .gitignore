@@ -2,5 +2,6 @@ venv
 dist
 build
 *.egg-info
-/home/zero/zhesp2/zhesp2/__pycache__
+__pycache__
 *.pyc
+.github/
