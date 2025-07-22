@@ -1,6 +1,8 @@
-venv
-dist
-build
-*.egg-info
-/home/zero/zhesp2/zhesp2/__pycache__
+venv/
+dist/
+build/
+*.egg-info/
+__pycache__/
 *.pyc
+setup.py
+pyproject.toml
