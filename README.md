@@ -1,6 +1,6 @@
 # Z-HESP2 — Zero’s Hash Encryption Secure Protocol
 
-Z-HESP2 is a terminal-based encryption tool designed for secure and efficient data protection. It features modern cryptographic techniques, including Argon2id key derivation and AES-GCM encryption, with support for metadata and multiple encryption versions. releases can be viewed and installed [here](https://pypi.org/project/zhesp2/)
+Z-HESP2 is a terminal-based encryption tool designed for secure and efficient data protection. It features modern cryptographic techniques, including Argon2id key derivation and AES-GCM encryption, with support for metadata timestamping.
 
 ## Features
 
@@ -67,7 +67,7 @@ GNU License Genral Public License v3.0
 
 ## Author
 
-[Zero](https://pypi.org/user/4n0nym0us/)
+Zero
 
 ## Donation Address
 
