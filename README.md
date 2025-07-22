@@ -65,15 +65,6 @@ The project is structured as a Python package with the following key modules:
 
 A new utility function `resolve_path(path: str) -> str` has been added to `crypto.py`. This function expands the tilde (`~`) in file paths to the current user's home directory, ensuring that paths using `~` are correctly resolved when encrypting or decrypting files.
 
-Example usage:
-
-```python
-from zhesp2.crypto import resolve_path
-
-input_path = resolve_path("~/Documents/secret.txt")
-print(input_path)  # Outputs: /home/username/Documents/secret.txt
-```
-
 ## License
 
 GNU License Genral Public License v3.0
