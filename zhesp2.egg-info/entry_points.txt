@@ -1,2 +1,0 @@
-[console_scripts]
-zhesp2 = zhesp2.__main__:main
