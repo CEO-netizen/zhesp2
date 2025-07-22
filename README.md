@@ -65,19 +65,14 @@ The project is structured as a Python package with the following key modules:
 
 A new utility function `resolve_path(path: str) -> str` has been added to `crypto.py`. This function expands the tilde (`~`) in file paths to the current user's home directory, ensuring that paths using `~` are correctly resolved when encrypting or decrypting files.
 
-## License
-
-Genral Public License v3.0
-**note** This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with this software or the use or other dealings in this software
-
 ## Author
 
 Zero
 
 ## Donation Address
 
-Support development with Ethereum or Ethereum-based tokens:
+Support development with Bitcoin at:
 
-[![Ethereum](https://img.shields.io/badge/ETH-0x2800aBdF...-627eea?style=flat-square&logo=ethereum&logoColor=white)](https://etherscan.io/address/0x2800aBdF356809F4EbE2c9158630CcF975E1Ee67)
+[![Donate Bitcoin](https://img.shields.io/badge/Donate-Bitcoin-FF9900?logo=bitcoin&style=flat-square)](bitcoin=bc1qx8tyfmeapz0663pzlgevvhe3dsdcg83yxgkhhs)
 
 Thank you for helping keep ZHESP secure and evolving!
