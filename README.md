@@ -73,6 +73,6 @@ Zero
 
 Support development with Bitcoin at:
 
-[![Donate Bitcoin](https://img.shields.io/badge/Donate-Bitcoin-FF9900?logo=bitcoin&style=flat-square)](bitcoin=bc1qx8tyfmeapz0663pzlgevvhe3dsdcg83yxgkhhs)
+bc1qx8tyfmeapz0663pzlgevvhe3dsdcg83yxgkhhs
 
 Thank you for helping keep ZHESP secure and evolving!
