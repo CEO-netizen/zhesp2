@@ -7,7 +7,13 @@ from typing import List
 
 def handle_encrypt(args: List[str]) -> None:
     msg = " ".join(args) or input("Message: ")
-    pwd = getpass.getpass("Passphrase: ")
+    while True:
+        pwd = getpass.getpass("Passphrase: ")
+        pwd_confirm = getpass.getpass("Confirm Passphrase: ")
+        if pwd != pwd_confirm:
+            print("[!] Passphrases do not match. Please try again.")
+        else:
+            break
     token = safe_encrypt_flow(msg, pwd)
     print("[+] Encrypted token:\n" + token)
 

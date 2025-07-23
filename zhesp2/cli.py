@@ -20,7 +20,7 @@ def banner() -> None:
                Version {__version__} (Z-HESP2)
 """)
 
-def safe_encrypt_flow(message: str, password: str) -> str:
+def safe_encrypt_flow(message: str, password: str, metadata: dict | None = None) -> str:
     """Perform first-time integrity check then encrypt the message."""
     if not os.path.exists(INTEGRITY_FLAG_FILE):
         print("[*] Running first-time encryption integrity check...")
@@ -34,7 +34,7 @@ def safe_encrypt_flow(message: str, password: str) -> str:
             print("[✓] Z-HESP2 encryption system verified.")
         except Exception as e:
             raise RuntimeError(f"[!] Integrity test failed: {e}")
-    return encrypt(message, password)
+    return encrypt(message, password, metadata)
 
 def list_versions() -> None:
     """Print supported ZHESP2 versions."""
@@ -109,6 +109,8 @@ import pathlib
 def encrypt_file(input_path: str, output_path: str, password: str) -> None:
     """Encrypt the contents of a file or directory and write to output path."""
     try:
+        from .crypto import shred_file
+
         input_path_obj = pathlib.Path(input_path)
         output_path_obj = pathlib.Path(output_path)
 
@@ -130,6 +132,8 @@ def encrypt_file(input_path: str, output_path: str, password: str) -> None:
                     with open(out_file_path, "w", encoding="utf-8") as f:
                         f.write(token)
                     print(f"[+] Encrypted file: {file_path} -> {out_file_path}")
+                    # Shred original file after encryption
+                    shred_file(str(file_path))
         else:
             # Encrypt single file
             input_name = input_path_obj.name
@@ -144,6 +148,8 @@ def encrypt_file(input_path: str, output_path: str, password: str) -> None:
             with open(out_file_path, "w", encoding="utf-8") as f:
                 f.write(token)
             print(f"[+] File encrypted successfully: {out_file_path}")
+            # Shred original file after encryption
+            shred_file(str(input_path_obj))
     except Exception as e:
         print(f"[!] Error encrypting file: {e}")
 

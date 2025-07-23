@@ -1,28 +1,29 @@
-import os
+from datetime import datetime, timezone
 import base64
 import json
-import zlib
+import os
 import secrets
-from datetime import datetime, timezone
+import zlib
 
 from Crypto.Cipher import AES
 from argon2.low_level import hash_secret_raw, Type
 
-VERSION = 2
+from .config import (
+    VERSION,
+    VERSIONS_INFO,
+    ARGON2_TIME_COST,
+    ARGON2_MEMORY_COST,
+    ARGON2_PARALLELISM,
+    ARGON2_HASH_LENGTH,
+)
 
-VERSIONS_INFO = {
-    1: {
-        "name": "ZH1",
-        "description": "Initial release - AES-256-CBC encryption, PBKDF2 key derivation",
-        "status": "deprecated"
-    },
-    2: {
-        "name": "ZH2",
-        "description": "Current stable release - Argon2id KDF, metadata support, base64 & hex output",
-        "status": "stable"
-    },
-    # Add future versions here
-}
+class EncryptionError(Exception):
+    """Custom exception for encryption errors."""
+    pass
+
+class DecryptionError(Exception):
+    """Custom exception for decryption errors."""
+    pass
 
 def generate_key(length: int = 32, print_key: bool = True) -> str:
     raw = secrets.token_bytes(length)
@@ -31,16 +32,21 @@ def generate_key(length: int = 32, print_key: bool = True) -> str:
         print(f"[+] Generated Key ({length * 8} bits):\\nBase64: {b64}\\nHex:    {raw.hex()}\\n")
     return b64
 
-def derive_key(password: str, salt: bytes, length: int = 32, time_cost=3, memory_cost=65536, parallelism=2) -> bytes:
-    return hash_secret_raw(
-        password.encode(),
-        salt,
-        time_cost=time_cost,
-        memory_cost=memory_cost,
-        parallelism=parallelism,
-        hash_len=length,
-        type=Type.ID,
-    )
+def derive_key(password: str, salt: bytes, length: int = ARGON2_HASH_LENGTH,
+               time_cost=ARGON2_TIME_COST, memory_cost=ARGON2_MEMORY_COST,
+               parallelism=ARGON2_PARALLELISM) -> bytes:
+    try:
+        return hash_secret_raw(
+            password.encode(),
+            salt,
+            time_cost=time_cost,
+            memory_cost=memory_cost,
+            parallelism=parallelism,
+            hash_len=length,
+            type=Type.ID,
+        )
+    except Exception as e:
+        raise EncryptionError(f"Key derivation failed: {e}")
 
 def encrypt(message: str, password: str, metadata: dict | None = None) -> str:
     salt = os.urandom(16)
@@ -171,3 +177,23 @@ def resolve_path(path: str) -> str:
     if path.startswith("~"):
         return os.path.expanduser(path)
     return path
+
+def shred_file(path: str, passes: int = 3) -> None:
+    """
+    Securely shred a file by overwriting its content multiple times with random data before deleting it.
+
+    Args:
+        path (str): The file path to shred.
+        passes (int): Number of overwrite passes. Default is 3.
+    """
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"File not found: {path}")
+
+    length = os.path.getsize(path)
+    with open(path, "ba+", buffering=0) as f:
+        for _ in range(passes):
+            f.seek(0)
+            f.write(os.urandom(length))
+            f.flush()
+            os.fsync(f.fileno())
+    os.remove(path)
