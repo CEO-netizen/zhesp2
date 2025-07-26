@@ -67,4 +67,4 @@ A new utility function `resolve_path(path: str) -> str` has been added to `crypt
 
 ## Author
 
-Zero
+Gage
