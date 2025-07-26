@@ -19,7 +19,6 @@ Z-HESP2 is a terminal-based encryption tool designed for secure and efficient da
 gh repo clone CEO-netizen/zhesp2
 # or git clone
 cd zhesp2
-pip install -r requirements.txt
 pip install .
 ```
 
