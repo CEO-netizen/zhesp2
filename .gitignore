@@ -1,8 +1,9 @@
 venv
+.venv/
 dist
 build
 *.egg-info
 __pycache__/
 *.pyc
 .github/
-.gitignore
+.gitignore/

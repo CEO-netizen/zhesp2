@@ -68,11 +68,3 @@ A new utility function `resolve_path(path: str) -> str` has been added to `crypt
 ## Author
 
 Zero
-
-## Donation Address
-
-Support development with Bitcoin at:
-
-bc1qx8tyfmeapz0663pzlgevvhe3dsdcg83yxgkhhs
-
-Thank you for helping keep ZHESP secure and evolving!
