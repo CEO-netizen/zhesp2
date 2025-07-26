@@ -29,7 +29,7 @@ def generate_key(length: int = 32, print_key: bool = True) -> str:
     raw = secrets.token_bytes(length)
     b64 = base64.urlsafe_b64encode(raw).decode()
     if print_key:
-        print(f"[+] Generated Key ({length * 8} bits):\\nBase64: {b64}\\nHex:    {raw.hex()}\\n")
+        print(f"[+] Generated Key ({length * 8} bits):\nBase64: {b64}\nHex:    {raw.hex()}\n")
     return b64
 
 def derive_key(password: str, salt: bytes, length: int = ARGON2_HASH_LENGTH,
