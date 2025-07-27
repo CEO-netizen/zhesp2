@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ZHESP2 Terminal Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css">
+  <style>
+    body, html { margin: 0; height: 100%; background: black; }
+    #terminal { height: 100vh; width: 100vw; }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <script>
+    const term = new Terminal({ cursorBlink: true, theme: { background: '#000000' } });
+    term.open(document.getElementById('terminal'));
+
+    const prompt = '> ';
+    let buffer = '';
+    const commands = {
+      help: "ZHESP2 Web Demo\nCommands: help, version, encrypt, decrypt",
+      version: "ZHESP2 v2.4 (Pyodide Demo)",
+      encrypt: "[simulated encryption output]",
+      decrypt: "[simulated decryption output]"
+    };
+
+    function runCommand(cmd) {
+      const trimmed = cmd.trim();
+      return commands[trimmed] || `Unknown command: ${trimmed}`;
+    }
+
+    function printPrompt() {
+      term.write(prompt);
+    }
+
+    term.writeln("Welcome to ZHESP2 Web Terminal\n disclaimer: this is just a web demo for ZHESP2 this doesn't actually encrypt anything for actual security download the ZHESP2 package and follow the installation guide in the README.md file");
+    printPrompt();
+
+    term.onKey(({ key, domEvent }) => {
+      const char = domEvent.key;
+      if (char === "Enter") {
+        term.writeln('');
+        const result = runCommand(buffer);
+        term.writeln(result);
+        buffer = '';
+        printPrompt();
+      } else if (char === "Backspace") {
+        if (buffer.length > 0) {
+          buffer = buffer.slice(0, -1);
+          term.write('\b \b');
+        }
+      } else if (char.length === 1) {
+        buffer += char;
+        term.write(char);
+      }
+    });
+  </script>
+</body>
+</html>
