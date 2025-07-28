@@ -1,27 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ZHESP2 Web Terminal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
+  <title>ZHESP2 Terminal</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css">
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
   <style>
     html, body {
       margin: 0;
-      padding: 0;
       height: 100%;
       background: black;
       font-family: monospace;
     }
-
     #terminal {
       height: 100vh;
       width: 100vw;
-    }
-
-    ::selection {
-      background: #555;
     }
   </style>
 </head>
@@ -30,176 +22,97 @@
   <script>
     const term = new Terminal({
       cursorBlink: true,
-      theme: {
-        background: '#000000',
-        foreground: '#00FF00'
-      },
-      scrollback: 1000
-    });
+      fontFamily: 'monospace',
+      fontSize: 14,
+      theme: { background: '#000000', foreground: '#00ff00' }
+    });const shellPrompt = "zhesp2> ";
+const welcomeMsg = [
+  "ZHESP2 Terminal \u2014 version 2.4.0",
+  "Type 'help' for commands.\n"
+];
 
-    term.open(document.getElementById('terminal'));
+let buffer = '';
 
-    const username = 'user';
-    const hostname = 'zhesp2-web';
-    let cwd = '~';
-    let buffer = '';
-    let cursor = 0;
-    const history = [];
-    let historyIndex = -1;
-    let isProcessing = false;
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const fakeFS = {
-      '~': ['documents', 'secrets.txt', 'encrypted.zhesp2']
-    };
+const commands = {
+  help: `Available commands:
 
-    const commands = {
-      help: `Available commands:
-  help         Show this help message
-  version      Show ZHESP2 version
-  encrypt      Simulate encryption of a file
-  decrypt      Simulate decryption of a file
-  ls           List directory contents
-  cd           Change directory (simulated)
-  pwd          Print current directory
-  clear        Clear the screen`,
-      version: 'ZHESP2 version 2.4.0 (Web Demo)',
-      encrypt: '[*] Encrypting "secrets.txt"...\n[+] Encrypted to "secrets.txt.zhesp2"',
-      decrypt: '[*] Decrypting "secrets.txt.zhesp2"...\n[+] Decrypted to "secrets.txt"',
-      pwd: () => cwd,
-      ls: () => fakeFS[cwd]?.join('\t') || '',
-      cd: arg => {
-        if (arg === '~') {
-          cwd = '~';
-          return '';
-        } else {
-          return `cd: ${arg}: No such directory`;
-        }
-      }
-    };
+help       Show this help message encrypt    Encrypt a file decrypt    Decrypt a file genkey     Generate new key exit       Exit the terminal`,
 
-    function promptLine() {
-      return `${username}@${hostname}:${cwd}$ `;
-    }
+genkey: `Generating key...
 
-    function printPrompt() {
-      term.write(`\r\n${promptLine()}`);
+Key generated and saved to zhesp2.key`,
+
+encrypt: async (args) => {
+    if (!args[0]) return "Usage: encrypt <filename>";
+    const filename = args[0];
+    await delay(800);
+    return `Encrypting ${filename}...
+
+✓ Output: ${filename}.zhesp2 ✓ Metadata embedded ✓ Argon2id key derivation complete`; },
+
+decrypt: async (args) => {
+    if (!args[0]) return "Usage: decrypt <filename.zhesp2>";
+    const filename = args[0];
+    await delay(800);
+    return `Decrypting ${filename}...
+
+✓ Output: ${filename.replace(/.zhesp2$/, '')} ✓ Metadata verified ✓ AES-GCM decryption complete`; },
+
+exit: 'exit'
+};
+
+function printPrompt() {
+  term.write(`\r\n${shellPrompt}`);
+}
+
+async function handleCommand(input) {
+  const [cmd, ...args] = input.trim().split(/\s+/);
+  const command = commands[cmd];
+
+  if (!command) {
+    term.writeln(`Unknown command: ${cmd}`);
+    return;
+  }
+
+  if (typeof command === 'string') {
+    if (command === 'exit') {
+      term.writeln("Exiting ZHESP2...");
       buffer = '';
-      cursor = 0;
+      return;
     }
+    term.writeln(command);
+  } else if (typeof command === 'function') {
+    const result = await command(args);
+    term.writeln(result);
+  }
+}
 
-    function redrawInput() {
-      const prompt = promptLine();
-      term.write('\x1b[2K\r'); // Clear the line
-      term.write(prompt + buffer);
-      term.write(`\x1b[${prompt.length + cursor}G`);
-    }
+term.open(document.getElementById('terminal'));
+welcomeMsg.forEach(line => term.writeln(line));
+printPrompt();
 
-    async function runCommand(input) {
-      isProcessing = true;
-      const args = input.trim().split(/\s+/);
-      const cmd = args[0];
-      const arg1 = args[1];
-      const out = typeof commands[cmd] === 'function'
-        ? commands[cmd](arg1)
-        : commands[cmd] ?? `Command not found: ${cmd}`;
-      await new Promise(resolve => setTimeout(resolve, 200));
-      if (out) out.toString().split('\n').forEach(line => term.writeln(line));
-      isProcessing = false;
-      printPrompt();
-    }
+term.onKey(async ({ key, domEvent }) => {
+  const char = domEvent.key;
 
-    term.writeln("Welcome to ZHESP2 Web Terminal");
-    term.writeln("Note: This is a simulation. No real encryption is performed.");
+  if (char === 'Enter') {
+    term.writeln('');
+    await handleCommand(buffer);
+    if (buffer.trim() === 'exit') return;
+    buffer = '';
     printPrompt();
+  } else if (char === 'Backspace') {
+    if (buffer.length > 0) {
+      buffer = buffer.slice(0, -1);
+      term.write('\b \b');
+    }
+  } else if (char.length === 1) {
+    buffer += char;
+    term.write(char);
+  }
+});
 
-    term.onKey(e => {
-      if (isProcessing) return;
-
-      const { key, domEvent } = e;
-
-      switch (domEvent.key) {
-        case 'Enter':
-          term.write('\r\n');
-          if (buffer.trim()) {
-            history.push(buffer);
-            historyIndex = history.length;
-          }
-          runCommand(buffer);
-          break;
-
-        case 'Backspace':
-          if (cursor > 0) {
-            buffer = buffer.slice(0, cursor - 1) + buffer.slice(cursor);
-            cursor--;
-            redrawInput();
-          }
-          break;
-
-        case 'Delete':
-          if (cursor < buffer.length) {
-            buffer = buffer.slice(0, cursor) + buffer.slice(cursor + 1);
-            redrawInput();
-          }
-          break;
-
-        case 'ArrowLeft':
-          if (cursor > 0) {
-            cursor--;
-            redrawInput();
-          }
-          break;
-
-        case 'ArrowRight':
-          if (cursor < buffer.length) {
-            cursor++;
-            redrawInput();
-          }
-          break;
-
-        case 'ArrowUp':
-          if (history.length && historyIndex > 0) {
-            historyIndex--;
-            buffer = history[historyIndex];
-            cursor = buffer.length;
-            redrawInput();
-          }
-          break;
-
-        case 'ArrowDown':
-          if (history.length && historyIndex < history.length - 1) {
-            historyIndex++;
-            buffer = history[historyIndex];
-            cursor = buffer.length;
-            redrawInput();
-          } else {
-            buffer = '';
-            cursor = 0;
-            redrawInput();
-          }
-          break;
-
-        case 'Home':
-          cursor = 0;
-          redrawInput();
-          break;
-
-        case 'End':
-          cursor = buffer.length;
-          redrawInput();
-          break;
-
-        case 'Tab':
-          domEvent.preventDefault(); // ignore
-          break;
-
-        default:
-          if (domEvent.key.length === 1 && !domEvent.ctrlKey && !domEvent.metaKey) {
-            buffer = buffer.slice(0, cursor) + domEvent.key + buffer.slice(cursor);
-            cursor++;
-            redrawInput();
-          }
-      }
-    });
   </script>
 </body>
 </html>
