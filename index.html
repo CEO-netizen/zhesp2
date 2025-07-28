@@ -1,58 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ZHESP2 Terminal Demo</title>
+  <title>ZHESP2 Web Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css">
   <style>
-    body, html { margin: 0; height: 100%; background: black; }
-    #terminal { height: 100vh; width: 100vw; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      font-family: monospace;
+    }
+
+    #terminal {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    ::selection {
+      background: #555;
+    }
   </style>
 </head>
 <body>
   <div id="terminal"></div>
   <script>
-    const term = new Terminal({ cursorBlink: true, theme: { background: '#000000' } });
+    const term = new Terminal({
+      cursorBlink: true,
+      theme: {
+        background: '#000000',
+        foreground: '#00FF00'
+      },
+      scrollback: 1000
+    });
+
     term.open(document.getElementById('terminal'));
 
-    const prompt = '> ';
+    const username = 'user';
+    const hostname = 'zhesp2-web';
+    let cwd = '~';
     let buffer = '';
-    const commands = {
-      help: "ZHESP2 Web Demo\nCommands: help, version, encrypt, decrypt",
-      version: "ZHESP2 v2.4 (Pyodide Demo)",
-      encrypt: "[simulated encryption output]",
-      decrypt: "[simulated decryption output]"
+    let cursor = 0;
+    const history = [];
+    let historyIndex = -1;
+    let isProcessing = false;
+
+    const fakeFS = {
+      '~': ['documents', 'secrets.txt', 'encrypted.zhesp2']
     };
 
-    function runCommand(cmd) {
-      const trimmed = cmd.trim();
-      return commands[trimmed] || `Unknown command: ${trimmed}`;
+    const commands = {
+      help: `Available commands:
+  help         Show this help message
+  version      Show ZHESP2 version
+  encrypt      Simulate encryption of a file
+  decrypt      Simulate decryption of a file
+  ls           List directory contents
+  cd           Change directory (simulated)
+  pwd          Print current directory
+  clear        Clear the screen`,
+      version: 'ZHESP2 version 2.4.0 (Web Demo)',
+      encrypt: '[*] Encrypting "secrets.txt"...\n[+] Encrypted to "secrets.txt.zhesp2"',
+      decrypt: '[*] Decrypting "secrets.txt.zhesp2"...\n[+] Decrypted to "secrets.txt"',
+      pwd: () => cwd,
+      ls: () => fakeFS[cwd]?.join('\t') || '',
+      cd: arg => {
+        if (arg === '~') {
+          cwd = '~';
+          return '';
+        } else {
+          return `cd: ${arg}: No such directory`;
+        }
+      }
+    };
+
+    function promptLine() {
+      return `${username}@${hostname}:${cwd}$ `;
     }
 
     function printPrompt() {
-      term.write(prompt);
+      term.write(`\r\n${promptLine()}`);
+      buffer = '';
+      cursor = 0;
     }
 
-    term.writeln("Welcome to ZHESP2 Web Terminal\n disclaimer: this is just a web demo for ZHESP2 this doesn't actually encrypt anything for actual security download the ZHESP2 package and follow the installation guide in the README.md file");
+    function redrawInput() {
+      const prompt = promptLine();
+      term.write('\x1b[2K\r'); // Clear the line
+      term.write(prompt + buffer);
+      term.write(`\x1b[${prompt.length + cursor}G`);
+    }
+
+    async function runCommand(input) {
+      isProcessing = true;
+      const args = input.trim().split(/\s+/);
+      const cmd = args[0];
+      const arg1 = args[1];
+      const out = typeof commands[cmd] === 'function'
+        ? commands[cmd](arg1)
+        : commands[cmd] ?? `Command not found: ${cmd}`;
+      await new Promise(resolve => setTimeout(resolve, 200));
+      if (out) out.toString().split('\n').forEach(line => term.writeln(line));
+      isProcessing = false;
+      printPrompt();
+    }
+
+    term.writeln("Welcome to ZHESP2 Web Terminal");
+    term.writeln("Note: This is a simulation. No real encryption is performed.");
     printPrompt();
 
-    term.onKey(({ key, domEvent }) => {
-      const char = domEvent.key;
-      if (char === "Enter") {
-        term.writeln('');
-        const result = runCommand(buffer);
-        term.writeln(result);
-        buffer = '';
-        printPrompt();
-      } else if (char === "Backspace") {
-        if (buffer.length > 0) {
-          buffer = buffer.slice(0, -1);
-          term.write('\b \b');
-        }
-      } else if (char.length === 1) {
-        buffer += char;
-        term.write(char);
+    term.onKey(e => {
+      if (isProcessing) return;
+
+      const { key, domEvent } = e;
+
+      switch (domEvent.key) {
+        case 'Enter':
+          term.write('\r\n');
+          if (buffer.trim()) {
+            history.push(buffer);
+            historyIndex = history.length;
+          }
+          runCommand(buffer);
+          break;
+
+        case 'Backspace':
+          if (cursor > 0) {
+            buffer = buffer.slice(0, cursor - 1) + buffer.slice(cursor);
+            cursor--;
+            redrawInput();
+          }
+          break;
+
+        case 'Delete':
+          if (cursor < buffer.length) {
+            buffer = buffer.slice(0, cursor) + buffer.slice(cursor + 1);
+            redrawInput();
+          }
+          break;
+
+        case 'ArrowLeft':
+          if (cursor > 0) {
+            cursor--;
+            redrawInput();
+          }
+          break;
+
+        case 'ArrowRight':
+          if (cursor < buffer.length) {
+            cursor++;
+            redrawInput();
+          }
+          break;
+
+        case 'ArrowUp':
+          if (history.length && historyIndex > 0) {
+            historyIndex--;
+            buffer = history[historyIndex];
+            cursor = buffer.length;
+            redrawInput();
+          }
+          break;
+
+        case 'ArrowDown':
+          if (history.length && historyIndex < history.length - 1) {
+            historyIndex++;
+            buffer = history[historyIndex];
+            cursor = buffer.length;
+            redrawInput();
+          } else {
+            buffer = '';
+            cursor = 0;
+            redrawInput();
+          }
+          break;
+
+        case 'Home':
+          cursor = 0;
+          redrawInput();
+          break;
+
+        case 'End':
+          cursor = buffer.length;
+          redrawInput();
+          break;
+
+        case 'Tab':
+          domEvent.preventDefault(); // ignore
+          break;
+
+        default:
+          if (domEvent.key.length === 1 && !domEvent.ctrlKey && !domEvent.metaKey) {
+            buffer = buffer.slice(0, cursor) + domEvent.key + buffer.slice(cursor);
+            cursor++;
+            redrawInput();
+          }
       }
     });
   </script>
