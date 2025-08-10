@@ -83,9 +83,9 @@ The project is structured as a Python package with the following key modules:
 
 Each security profile uses different Argon2 parameters:
 
-- **Fast:** time_cost=2, memory_cost=65536 (64MB), parallelism=2
-- **Secure:** time_cost=5, memory_cost=131072 (128MB), parallelism=4
-- **Paranoid:** time_cost=10, memory_cost=262144 (256MB), parallelism=8
+- **Fast:** time_cost=2, memory_cost=65536 (64MB), parallelism=2 (AES-GCM)
+- **Secure:** time_cost=5, memory_cost=131072 (128MB), parallelism=4 (AES-GCM)
+- **Paranoid:** time_cost=10, memory_cost=262144 (256MB), parallelism=8 (Uses XChaCha20-poly1305)
 
 ### New Utility Function: resolve_path
 
