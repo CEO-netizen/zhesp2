@@ -223,11 +223,18 @@ def shred_file(path: str, passes: int = 3) -> None:
         path (str): The file path to shred.
         passes (int): Number of overwrite passes. Default is 3.
     """
+    path = resolve_path(path)
     if not os.path.isfile(path):
         raise FileNotFoundError(f"File not found: {path}")
 
     length = os.path.getsize(path)
-    with open(path, "ba+", buffering=0) as f:
+    if length == 0:
+        # nothing to overwrite; just remove
+        os.remove(path)
+        return
+
+    # Open for read/write in binary (not append) so seek/write works as intended
+    with open(path, "r+b", buffering=0) as f:
         for _ in range(passes):
             f.seek(0)
             f.write(os.urandom(length))

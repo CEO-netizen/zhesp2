@@ -85,8 +85,10 @@ ARGON2_MEMORY_COST = 131072
 ARGON2_PARALLELISM = 4
 ARGON2_HASH_LENGTH = 32
 
-# File path for integrity flag
-INTEGRITY_FLAG_FILE = "~/.zhesp2_verified"
+# File path for integrity flag (expanded by callers where needed)
+import os
+
+INTEGRITY_FLAG_FILE = os.path.expanduser("~/.zhesp2_verified")
 
 # File shredding parameters
 SHREDDING_PASSES = 3

@@ -20,9 +20,7 @@ import time
 import os
 from . import __version__
 from .crypto import encrypt, decrypt, generate_key, VERSIONS_INFO, encrypt_filename, decrypt_filename
-from .config import SECURITY_PROFILES, DEFAULT_SECURITY_PROFILE
-
-INTEGRITY_FLAG_FILE = os.path.expanduser("~/.zhesp2_verified")
+from .config import SECURITY_PROFILES, DEFAULT_SECURITY_PROFILE, INTEGRITY_FLAG_FILE
 
 def banner() -> None:
     """Print the ASCII art banner with version info."""
